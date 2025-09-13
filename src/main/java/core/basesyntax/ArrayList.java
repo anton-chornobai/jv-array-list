@@ -9,6 +9,7 @@ public class ArrayList<T> implements List<T> {
     private T[] elements;
     private int size;
 
+    @SuppressWarnings("unchecked")
     public ArrayList() {
         this.elements = (T[]) new Object[DEFAULT_CAPACITY];
         this.size = 0;
@@ -35,13 +36,9 @@ public class ArrayList<T> implements List<T> {
         if (toAdd == 0) {
             return;
         }
-        Object[] snapshot = new Object[toAdd];
-        for (int i = 0; i < toAdd; i++) {
-            snapshot[i] = list.get(i);
-        }
         ensureCapacity(size + toAdd);
-        for (Object e : snapshot) {
-            elements[size++] = (T) e;
+        for (int i = 0; i < toAdd; i++) {
+            elements[size++] = list.get(i);
         }
     }
 
@@ -62,7 +59,7 @@ public class ArrayList<T> implements List<T> {
         checkElementIndex(index);
         T removed = elements[index];
         System.arraycopy(elements, index + 1, elements, index, size - index - 1);
-        elements[--size] = null;
+        elements[--size] = null; // prevent memory leak
         return removed;
     }
 
@@ -90,6 +87,16 @@ public class ArrayList<T> implements List<T> {
         return size == 0;
     }
 
+    /** ✅ Missing clear() implementation */
+    @Override
+    public void clear() {
+        for (int i = 0; i < size; i++) {
+            elements[i] = null; // allow GC to clean up
+        }
+        size = 0;
+    }
+
+    // ----------- private helpers -------------
     @SuppressWarnings("unchecked")
     private void ensureCapacity(int minCapacity) {
         if (elements.length < minCapacity) {
