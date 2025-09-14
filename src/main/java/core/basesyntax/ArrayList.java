@@ -9,7 +9,6 @@ public class ArrayList<T> implements List<T> {
     private T[] elements;
     private int size;
 
-    @SuppressWarnings("unchecked")
     public ArrayList() {
         this.elements = (T[]) new Object[DEFAULT_CAPACITY];
         this.size = 0;
